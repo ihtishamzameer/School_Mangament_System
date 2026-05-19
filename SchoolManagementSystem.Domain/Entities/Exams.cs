@@ -8,16 +8,20 @@ using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Domain.Entities
 {
-    //Independent academic entity.
-    public class Subject
+    //Defines exam events per class.
+    public class Exams
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int SubjectId { get; set; }
+        public int ExamId { get; set; }
 
-        public string Name { get; set; } = string.Empty;
+        public int ClassId { get; set; }
 
-        public ICollection<TeacherSubjects> TeacherSubjects { get; set; } = new List<TeacherSubjects>();
+        public string Title { get; set; } = string.Empty;
+
+        public DateTime ExamDate { get; set; }
+
         public ICollection<Marks> Marks { get; set; } = new List<Marks>();
+        public ICollection<DateSheets> DateSheets { get; set; } = new List<DateSheets>();
     }
 }

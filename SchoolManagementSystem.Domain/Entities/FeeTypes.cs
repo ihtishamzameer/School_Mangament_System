@@ -8,16 +8,15 @@ using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Domain.Entities
 {
-    //Independent academic entity.
-    public class Subject
+    //Defines categories of fees.
+    public class FeeTypes
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int SubjectId { get; set; }
+        public int FeeTypeId { get; set; }
+        public string Name { get; set; } = string.Empty; //tuition,transport,exam
 
-        public string Name { get; set; } = string.Empty;
+        public ICollection<StudentFees> StudentFees { get; set; } = new List<StudentFees>();
 
-        public ICollection<TeacherSubjects> TeacherSubjects { get; set; } = new List<TeacherSubjects>();
-        public ICollection<Marks> Marks { get; set; } = new List<Marks>();
     }
 }

@@ -8,16 +8,15 @@ using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Domain.Entities
 {
-    //Independent academic entity.
-    public class Subject
+    //Enables role-based access control (RBAC).
+    public class Roles
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int SubjectId { get; set; }
+        public int RoleId { get; set; }
+        public string RoleName { get; set; }
 
-        public string Name { get; set; } = string.Empty;
+        public ICollection<UserRoles> UserRoles { get; set; } = new List<UserRoles>();
 
-        public ICollection<TeacherSubjects> TeacherSubjects { get; set; } = new List<TeacherSubjects>();
-        public ICollection<Marks> Marks { get; set; } = new List<Marks>();
     }
 }

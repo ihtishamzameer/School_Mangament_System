@@ -3,26 +3,20 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Domain.Entities
 {
-    public class Student
+    //Tracks daily student presence.
+    public class Attendance
     {
-        //Student is an extension of User with academic metadata.
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int AttendanceId { get; set; }
         public int StudentId { get; set; }
-        public int UserId { get; set; }
-        public string RollNumber { get; set; } = string.Empty;
-        public DateOnly AdmissionDate { get; set; }
-
         public int ClassId { get; set; }
-        public Classes Class { get; set; }
-
-        public ICollection<StudentFees> StudentFees { get; set; }
-        public ICollection<Marks> Marks { get; set; }
+        public DateOnly Date { get; set; }
+        public string Status { get; set; }
     }
 }
