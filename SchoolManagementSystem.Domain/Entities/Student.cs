@@ -11,18 +11,8 @@ namespace SchoolManagementSystem.Domain.Entities
 {
     public class Student
     {
-        //Student is an extension of User with academic metadata.
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int StudentId { get; set; }
-        public int UserId { get; set; }
-        public string RollNumber { get; set; } = string.Empty;
-        public DateOnly AdmissionDate { get; set; }
-
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
         public int ClassId { get; set; }
-        public Classes Class { get; set; }
-
-        public ICollection<StudentFees> StudentFees { get; set; }
-        public ICollection<Marks> Marks { get; set; }
     }
 }

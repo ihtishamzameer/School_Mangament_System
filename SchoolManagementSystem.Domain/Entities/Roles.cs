@@ -11,12 +11,7 @@ namespace SchoolManagementSystem.Domain.Entities
     //Enables role-based access control (RBAC).
     public class Roles
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int RoleId { get; set; }
-        public string RoleName { get; set; }
-
-        public ICollection<UserRoles> UserRoles { get; set; } = new List<UserRoles>();
-
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
     }
 }

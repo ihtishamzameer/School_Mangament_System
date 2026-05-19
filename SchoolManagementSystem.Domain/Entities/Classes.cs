@@ -8,14 +8,9 @@ using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Domain.Entities
 {
-    public class Classes
+    public class Class
     {
-        //Represents grouping structure for students.
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ClassId { get; set; }
-        public string ClassName { get; set; } = string.Empty;
-        public string Section { get; set; } = string.Empty;
-        public string AcademicYear { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
     }
 }

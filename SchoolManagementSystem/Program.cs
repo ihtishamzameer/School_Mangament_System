@@ -1,26 +1,67 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using SchoolManagementSystem.Api.JWT;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var jwt = builder.Configuration.GetSection("Jwt");
 
-// ─── Database & Context ──────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// DATABASE
+// ─────────────────────────────────────────────
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IApplicationDbContext>(provider =>
     provider.GetRequiredService<ApplicationDbContext>());
 
-// ─── MediatR CQRS ──────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// MEDIATR (CQRS)
+// ─────────────────────────────────────────────
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(IApplicationDbContext).Assembly));
 
+// ─────────────────────────────────────────────
+// JWT AUTHENTICATION (CRITICAL)
+// ─────────────────────────────────────────────
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
 
-// Add services to the container.
+        ValidIssuer = jwt["Issuer"],
+        ValidAudience = jwt["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(jwt["Key"]!))
+    };
+});
+
+// ─────────────────────────────────────────────
+// AUTHORIZATION
+// ─────────────────────────────────────────────
+builder.Services.AddAuthorization();
+
+// ─────────────────────────────────────────────
+// CONTROLLERS
+// ─────────────────────────────────────────────
 builder.Services.AddControllers();
 
-// ─── CORS (allow React dev server) ────────────────────────────────────────
+// ─────────────────────────────────────────────
+// CORS
+// ─────────────────────────────────────────────
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactAppPolicy", policy =>
@@ -31,13 +72,23 @@ builder.Services.AddCors(options =>
     });
 });
 
-// ─── Swagger ──────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// SWAGGER
+// ─────────────────────────────────────────────
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// ─────────────────────────────────────────────
+// CUSTOM SERVICES
+// ─────────────────────────────────────────────
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<JwtTokenService>();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// ─────────────────────────────────────────────
+// MIDDLEWARE PIPELINE (ORDER IS CRITICAL)
+// ─────────────────────────────────────────────
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -46,9 +97,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Enable CORS (IMPORTANT: before Authorization/MapControllers)
 app.UseCors("ReactAppPolicy");
 
+// 🔴 IMPORTANT: AUTHENTICATION MUST COME BEFORE AUTHORIZATION
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

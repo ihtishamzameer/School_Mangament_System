@@ -11,13 +11,8 @@ namespace SchoolManagementSystem.Domain.Entities
     //Independent academic entity.
     public class Subject
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int SubjectId { get; set; }
-
-        public string Name { get; set; } = string.Empty;
-
-        public ICollection<TeacherSubjects> TeacherSubjects { get; set; } = new List<TeacherSubjects>();
-        public ICollection<Marks> Marks { get; set; } = new List<Marks>();
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
+        public int ClassId { get; set; }
     }
 }
