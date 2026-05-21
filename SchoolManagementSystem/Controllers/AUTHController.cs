@@ -19,6 +19,7 @@ namespace SchoolManagementSystem.Api.Controllers
             _mediator = mediator;
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterUserCommand command)
         {
@@ -26,6 +27,7 @@ namespace SchoolManagementSystem.Api.Controllers
             return Ok(id);
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginUserCommand command)
         {
