@@ -22,16 +22,21 @@ namespace SchoolManagementSystem.Application.Features.Auth.Handlers
 
         public async Task<string> Handle(LoginUserCommand request, CancellationToken cancellationToken)
         {
+            var username = request.Username.Trim().ToLower();
+
             var user = await _context.Users
-                .FirstOrDefaultAsync(x => x.Username == request.Username, cancellationToken);
+                .FirstOrDefaultAsync(x => x.Username.ToLower() == username, cancellationToken);
 
             if (user == null)
                 throw new Exception("Invalid username or password");
 
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            var password = request.Password.Trim();
+
+            var isValid = BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
+
+            if (!isValid)
                 throw new Exception("Invalid username or password");
 
-            // MVP: no roles yet → empty list
             var token = _tokenService.GenerateToken(user, new List<string>());
 
             return token;
